@@ -1,0 +1,64 @@
+:root {
+  --bg-color: rgb(48, 46, 46);
+}
+.main-home {
+  display: grid;
+  grid-template-rows: 1fr 100px;
+  background-color: var(--bg-color);
+  height: 100vh;
+  overflow-y: scroll;
+}
+footer.footer-home {
+  background-color: rgba(3, 3, 75, 0.801);
+  color: white;
+}
+/* .sub-project-wrapper {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+} */
+.project-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 400px));
+  gap: 20px;
+  padding: 20px;
+}
+.project-card-wrapper {
+  padding: 10px;
+  background-color: rgb(34, 33, 33);
+  border-radius: 10px;
+}
+@media (max-width: 765px) {
+  .project-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+}
+/* .project-card-image {
+  width: 100%;
+  height: 150px;
+} */
+.project-card-action a {
+  text-decoration: none;
+  background-color: rgba(3, 3, 75, 0.801);
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+}
+.project-card-title h3 {
+  color: white;
+  text-align: center;
+  padding: 5px;
+}
+.project-card-image {
+  width: 100%;
+  height: 150px;
+}
+.project-card-image img {
+  width: 100%;
+  height: 100%;
+  /* aspect-ratio: 2; */
+  object-fit: contain;
+}

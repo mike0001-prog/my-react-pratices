@@ -11,6 +11,7 @@ import { ToastContainer } from "../component/Toast";
 import { useState, useRef } from "react";
 import Explore from "../component/Explore";
 import Profile from "../component/Profile";
+
 // import { connectWebSocket } from "../API";
 export default function Chat() {
   const [toasts, setToasts] = useState([]);
@@ -99,7 +100,7 @@ export default function Chat() {
           <button className="fixed bottom-24 right-6 w-14 h-14 bg-primary-container text-black rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform z-40">
             <span className="material-symbols-outlined text-2xl">add</span>
           </button>
-          <ChatNav setNavstate={setNavstate} />
+          <ChatNav navState={navstate} setNavstate={setNavstate} />
         </div>
       )}
     </>

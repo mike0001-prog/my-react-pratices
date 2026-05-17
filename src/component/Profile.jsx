@@ -1,6 +1,27 @@
 import React from "react";
-
+import { useState } from "react";
+import { changepassword, updateusername } from "../API";
+import { StrengthBar, ValidatePassword } from "./chatAuth";
 export default function Profile() {
+  const [passwordInput, setPasswordInput] = useState("");
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState("");
+  const [passwordFormOpened, setPasswordFormOpened] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [userFormOpened, setUserFormOpened] = useState(false);
+
+  const changePassword = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("new_password1", passwordInput);
+    formData.append("new_password2", confirmPasswordInput);
+    await changepassword(formData);
+  };
+  const updateUsername = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("username", usernameInput);
+    await updateusername(formData);
+  };
   return (
     <>
       <main
@@ -17,25 +38,16 @@ export default function Profile() {
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYnnhpT5scabvfWc0kQ06uIaJBEFfTdJdpEtjlg028hl7UpJxDG0_lnGWD7oZHJ472PqBqww9x0eWY4MdFOZiaI73pBMbLsZIYGjOjh7sdJWulQpcQhpbrCFJq70CwSSrNDRPZZeE1OGbRPxN3sygd54YM2eMq0QU_v7qGG49boGdneVluDYYRgBpKm1PA9LMbvQ0Tb1MgOT7wMKt-Tj3azW2WbELT1m5GZheLKGzwIRiKYE6_B8BGzOtiR31ENLQQkCTxBhJ-SzOu"
               />
             </div>
-            <button className="absolute bottom-0 right-0 bg-primary-container text-on-primary-container p-2 rounded-full shadow-md active:scale-90 transition-transform flex items-center justify-center">
-              <span
-                className="material-symbols-outlined text-lg"
-                data-icon="edit"
-              >
-                edit
-              </span>
-            </button>
           </div>
           <h1 className="font-display-sm text-display-sm text-on-background mb-1">
             Alex Rivera
           </h1>
-          <p className="font-body-sm text-body-sm text-on-surface-variant text-center max-w-xs">
-            Product Designer &amp; Coffee Enthusiast. Building the future of
-            real-time communication at ChatMe.
-          </p>
         </section>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div
+          style={{ marginBottom: "16px" }}
+          className="grid grid-cols-2 gap-4"
+        >
           <div className="bg-surface-container-lowest p-4 rounded-lg flex flex-col items-center border border-surface-container-high">
             <span className="font-title-md text-title-md text-primary">
               124
@@ -61,7 +73,14 @@ export default function Profile() {
             </h2>
           </div>
 
-          <button className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group">
+          <button
+            onClick={() =>
+              userFormOpened
+                ? setUserFormOpened(false)
+                : setUserFormOpened(true)
+            }
+            className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group"
+          >
             <div className="flex items-center gap-4">
               <span
                 className="material-symbols-outlined text-stone-400 group-hover:text-primary transition-colors"
@@ -71,10 +90,10 @@ export default function Profile() {
               </span>
               <div>
                 <p className="font-body-md text-body-md text-on-surface">
-                  Edit Profile
+                  Edit Username
                 </p>
                 <p className="font-caption-xs text-caption-xs text-on-surface-variant">
-                  Update your photo, name, and bio
+                  Update your username
                 </p>
               </div>
             </div>
@@ -85,8 +104,41 @@ export default function Profile() {
               chevron_right
             </span>
           </button>
+          {userFormOpened && (
+            <form
+              onSubmit={(e) => {
+                updateUsername(e);
+              }}
+              style={{ padding: "2rem" }}
+              action=""
+            >
+              <input
+                className="w-full mb-2 h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
+                type="text"
+                value={usernameInput}
+                placeholder="Enter New Username..."
+                onChange={(e) => {
+                  setUsernameInput(e.target.value);
+                }}
+                required
+              />
+              <button
+                style={{ padding: "10px", marginTop: "5px" }}
+                className="rounded-full bg-primary-container text-black"
+              >
+                Change
+              </button>
+            </form>
+          )}
 
-          <button className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group border-t border-stone-50 dark:border-stone-800">
+          <button
+            onClick={() =>
+              passwordFormOpened
+                ? setPasswordFormOpened(false)
+                : setPasswordFormOpened(true)
+            }
+            className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group border-t border-stone-50 dark:border-stone-800"
+          >
             <div className="flex items-center gap-4">
               <span
                 className="material-symbols-outlined text-stone-400 group-hover:text-primary transition-colors"
@@ -110,58 +162,48 @@ export default function Profile() {
               chevron_right
             </span>
           </button>
-
-          <button className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group border-t border-stone-50 dark:border-stone-800">
-            <div className="flex items-center gap-4">
-              <span
-                className="material-symbols-outlined text-stone-400 group-hover:text-primary transition-colors"
-                data-icon="shield_lock"
-              >
-                shield_lock
-              </span>
-              <div>
-                <p className="font-body-md text-body-md text-on-surface">
-                  Privacy Settings
-                </p>
-                <p className="font-caption-xs text-caption-xs text-on-surface-variant">
-                  Manage your data and visibility
-                </p>
-              </div>
-            </div>
-            <span
-              className="material-symbols-outlined text-stone-300"
-              data-icon="chevron_right"
+          {passwordFormOpened && (
+            <form
+              onSubmit={(e) => {
+                changePassword(e);
+              }}
+              style={{ padding: "2rem" }}
+              action=""
             >
-              chevron_right
-            </span>
-          </button>
-        </div>
-
-        <div className="bg-white dark:bg-stone-900 rounded-lg overflow-hidden border border-stone-100 dark:border-stone-800 shadow-sm">
-          <button className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group">
-            <div className="flex items-center gap-4">
-              <span
-                className="material-symbols-outlined text-stone-400 group-hover:text-primary transition-colors"
-                data-icon="notifications"
+              <input
+                className="w-full mb-2 h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
+                type="password"
+                value={passwordInput}
+                placeholder="Enter New Password..."
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setPasswordInput(e.target.value);
+                }}
+                required
+              />
+              <input
+                className="w-full h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
+                type="password"
+                placeholder="Confirm New Password....."
+                value={confirmPasswordInput}
+                onChange={(e) => {
+                  setConfirmPasswordInput(e.target.value);
+                }}
+                required
+              />
+              <StrengthBar value={passwordInput} />
+              <ValidatePassword
+                password1={passwordInput}
+                password2={confirmPasswordInput}
+              />
+              <button
+                style={{ padding: "10px", marginTop: "5px" }}
+                className="rounded-full bg-primary-container text-black"
               >
-                notifications
-              </span>
-              <p className="font-body-md text-body-md text-on-surface">
-                Notifications
-              </p>
-            </div>
-            <div className="w-10 h-5 bg-surface-container-high rounded-full relative">
-              <div className="absolute right-1 top-1 w-3 h-3 bg-primary-container rounded-full"></div>
-            </div>
-          </button>
-          <button className="w-full flex items-center justify-between p-4 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left group border-t border-stone-50 dark:border-stone-800 text-error">
-            <div className="flex items-center gap-4">
-              <span className="material-symbols-outlined" data-icon="logout">
-                logout
-              </span>
-              <p className="font-body-md text-body-md">Logout</p>
-            </div>
-          </button>
+                Change Password
+              </button>
+            </form>
+          )}
         </div>
       </main>
     </>

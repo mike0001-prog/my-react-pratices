@@ -39,12 +39,70 @@ function connectWebSocket() {
       JSON.stringify({ msg: "hello world", type: "initial_handshake" }),
     );
   };
-  console.log(socket.OPEN);
-  console.log(socket.CLOSING, socket.CONNECTING);
+
   return socket;
 }
+const token = JSON.parse(sessionStorage.getItem("token"))?.key;
+
+async function changepassword(data) {
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/main/user/change_password/",
+      {
+        headers: { Authorization: `Token ${token}` },
+        method: "POST",
+        body: data,
+      },
+    );
+    if (response.ok) {
+      setToasts([
+        {
+          variant: "success",
+          message: "password changed sucessfully",
+          title: "settings",
+        },
+      ]);
+    }
+  } catch (error) {
+    setToasts([
+      {
+        variant: "error",
+        message: "something went wrong ",
+        title: "settings",
+      },
+    ]);
+  }
+}
+async function updateusername(data) {
+  try {
+    const response = fetch("http://127.0.0.1:8000/main/user/change_username/", {
+      headers: { Authorization: `Token ${token}` },
+      method: "POST",
+      body: data,
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setToasts([
+        {
+          variant: "success",
+          message: "username updated ",
+          title: "settings",
+        },
+      ]);
+      console.log(data);
+    }
+  } catch (error) {
+    setToasts([
+      {
+        variant: "error",
+        message: "something went wrong ",
+        title: "settings",
+      },
+    ]);
+    console.log(error);
+  }
+}
 async function getMessages(roomId) {
-  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
   console.log(token, JSON.parse(sessionStorage.getItem("token")));
   console.log(roomId);
   try {
@@ -178,6 +236,37 @@ async function createMessage(e, roomId, data) {
     console.log(data);
   }
 }
+
+async function getusers() {
+  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
+  // console.log(token, JSON.parse(sessionStorage.getItem("token")));
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/main/users/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    }
+  } catch (error) {
+    console.error(`something went wrong ${error}`);
+  }
+}
+async function connectRoom(data) {
+  try {
+    const response = fetch("", {
+      headers: { Authorization: `Token ${token}` },
+      body: data,
+      method: "POST",
+    });
+    if (response.ok) {
+      // console.log("")
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 export {
   createMessage,
   getTodoData,
@@ -187,4 +276,8 @@ export {
   Signup,
   getMessages,
   getRooms,
+  changepassword,
+  updateusername,
+  getusers,
+  connectRoom,
 };

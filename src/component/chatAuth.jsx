@@ -389,8 +389,27 @@ function getStrength(val) {
   if (/[^A-Za-z0-9]/.test(val)) score++;
   return score;
 }
+export function ValidatePassword({ password1, password2 }) {
+  const condition = password1 === password2;
+  if (!(password1 && password2)) return null;
+  if (condition) return null;
+  return (
+    <div
+      style={{
+        color: tokens.error,
+        marginTop: 4,
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: "0.05em",
+        textTransform: "uppercase",
+      }}
+    >
+      password input are not the same
+    </div>
+  );
+}
 
-function StrengthBar({ value }) {
+export function StrengthBar({ value }) {
   const score = value ? getStrength(value) : 0;
   const cls = score <= 1 ? "weak" : score <= 2 ? "medium" : "strong";
   const color =
@@ -428,7 +447,7 @@ function StrengthBar({ value }) {
             color,
           }}
         >
-          {labels[score] || "Strong"}
+          {labels[score] || "password must be more than 8 characters"}
         </p>
       )}
     </div>
@@ -576,6 +595,8 @@ function SignInPanel({ onSwitch, setIsLoggedIn, setToasts, websocket }) {
 // ─── Sign Up panel ────────────────────────────────────────────────────────────
 function SignUpPanel({ onSwitch, setToasts }) {
   const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
+
   const [username, setUsername] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -697,9 +718,13 @@ function SignUpPanel({ onSwitch, setToasts }) {
           <PasswordField
             placeholder="Repeat your password"
             autoComplete="new-password"
+            value={password2}
+            onChange={(e) => {
+              setPassword2(e.target.value);
+            }}
           />
         </FieldGroup>
-
+        <ValidatePassword password1={password} password2={password2} />
         <PrimaryButton isDisabled={isDisabled} type="submit" icon="person_add">
           Create account
         </PrimaryButton>

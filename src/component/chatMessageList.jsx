@@ -122,7 +122,12 @@ export default function ChatMessageList({
         </div>
       </div>
       {/* <!-- Chat Input --> */}
-      <footer className=" bg-white dark:bg-[#1a1a0d] border-t border-[#e5e5e0] dark:border-[#3d3c2a] p-4 flex items-center gap-4 shrink-0">
+      <form
+        onSubmit={(e) => {
+          sendMessage(e, currentChat);
+        }}
+        className=" bg-white dark:bg-[#1a1a0d] border-t border-[#e5e5e0] dark:border-[#3d3c2a] p-4 flex items-center gap-4 shrink-0"
+      >
         <div className="flex gap-2">
           {/* <button className="size-11 rounded-full flex items-center justify-center text-[#8c8b5f] hover:bg-[#f5f5f0] dark:hover:bg-[#2e2d1a] transition-colors">
             <span className="material-symbols-outlined">add_circle</span>
@@ -133,33 +138,27 @@ export default function ChatMessageList({
             </span>
           </button>
         </div>
-        <form
-          onSubmit={(e) => {
-            sendMessage(e, currentChat);
-          }}
-          method="post"
-        >
-          <div className="flex-1 relative">
-            <input
-              className="w-full h-12 bg-[#f5f5f0] dark:bg-[#2e2d1a] border-none rounded-full px-6 text-sm focus:ring-2 focus:ring-primary/50"
-              placeholder="Type a message..."
-              type="text"
-              value={messageInput}
-              onChange={(e) => {
-                setMessageInput(e.target.value);
-              }}
-            />
-          </div>
-          <button className="size-12 rounded-full bg-primary flex items-center justify-center text-black shadow-lg hover:scale-105 active:scale-95 transition-all">
-            <span
-              className="material-symbols-outlined"
-              // style="font-variation-settings: 'FILL' 1;"
-            >
-              send
-            </span>
-          </button>
-        </form>
-      </footer>
+
+        <div className="flex-1 relative">
+          <input
+            className="w-full h-12 bg-[#f5f5f0] dark:bg-[#2e2d1a] border-none rounded-full px-6 text-sm focus:ring-2 focus:ring-primary/50"
+            placeholder="Type a message..."
+            type="text"
+            value={messageInput}
+            onChange={(e) => {
+              setMessageInput(e.target.value);
+            }}
+          />
+        </div>
+        <button className="size-12 rounded-full bg-primary flex items-center justify-center text-black shadow-lg hover:scale-105 active:scale-95 transition-all">
+          <span
+            className="material-symbols-outlined"
+            // style="font-variation-settings: 'FILL' 1;"
+          >
+            send
+          </span>
+        </button>
+      </form>
     </section>
   );
 }

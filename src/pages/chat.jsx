@@ -14,6 +14,10 @@ import Profile from "../component/Profile";
 
 // import { connectWebSocket } from "../API";
 export default function Chat() {
+  const websocket = useRef(null);
+  // useEffect(() => {
+  //   websocket.current = connectWebSocket();
+  // }, []);
   const [toasts, setToasts] = useState([]);
   const [chatMessage, setChatMessage] = useState([]);
   const [IsOpen, setIsOPen] = useState(false);
@@ -23,7 +27,6 @@ export default function Chat() {
   const [currentChat, setCurrentChat] = useState();
   const [navstate, setNavstate] = useState("chat_body");
   const [currentUser, setCurrentUser] = useState("");
-  const websocket = useRef(null);
 
   if (websocket.current) {
     websocket.current.onmessage = (event) => {
@@ -32,11 +35,21 @@ export default function Chat() {
       const message = JSON.parse(event.data);
       console.log(message);
       setChatMessage((prevMessages) => {
-        const updatedMessages = [...prevMessages, message.data];
+        const updatedMessages = [...prevMessages, message.data.data];
         return updatedMessages;
       });
     };
+  } else if (IsLoggedIn && !websocket.current) {
+    const token = JSON.parse(sessionStorage.getItem("token")).key;
+    websocket.current = connectWebSocket(token);
   }
+  const logout = () => {
+    setIsLoggedIn(false);
+    sessionStorage.clear();
+    console.log(websocket.current);
+    // websocket.current.send(JSON.stringify({ type: "disconnect" }));
+    websocket.current.close();
+  };
   async function openRoom(e, conversationId, currentUser) {
     console.log(e.target);
 
@@ -44,7 +57,8 @@ export default function Chat() {
     console.log(conversationId);
 
     const data = await getMessages(conversationId);
-    console.log(data);
+    // console.log(data);
+    if (!data) return;
     setChatMessage(data);
     // sessionStorage.setItem(conversationId,JSON.stringify(data))
     setIsOPen(true);
@@ -63,7 +77,7 @@ export default function Chat() {
           setToasts={setToasts}
           websocket={websocket}
         />
-        ;
+
         <ToastContainer toasts={toasts} setToasts={setToasts} />
       </>
     );
@@ -80,14 +94,17 @@ export default function Chat() {
           currentChat={currentChat}
           closeRoom={closeRoom}
           chatMessage={chatMessage}
+          setChatMessage={setChatMessage}
         />
       ) : (
         <div className="body bg-surface text-on-surface overflow-x-hidden">
           {/* <button onClick={()=>{connectChatRoom("room_1")}}>connect</button> */}
-          <ChatHeader />
+          <ChatHeader logout={logout} />
           {navstate == "chat_body" && <ChatBody openRoom={openRoom} />}
-          {navstate == "explore" && <Explore />}
-          {!navstate && <Profile />}
+          {navstate == "explore" && (
+            <Explore setToasts={setToasts} openroom={openRoom} />
+          )}
+          {!navstate && <Profile setToasts={setToasts} />}
           {/* {navstate == "chat_body" ? (
             <ChatBody openRoom={openRoom} />
           ) : navstate == "explore" ? (
@@ -103,6 +120,7 @@ export default function Chat() {
           <ChatNav navState={navstate} setNavstate={setNavstate} />
         </div>
       )}
+      <ToastContainer toasts={toasts} setToasts={setToasts} />
     </>
   );
 }

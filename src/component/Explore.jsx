@@ -3,14 +3,15 @@ import { UserCard } from "./userCard";
 import { getusers } from "../API";
 import { useState, useEffect } from "react";
 
-export default function Explore() {
+export default function Explore({ setToasts, openroom }) {
   const [users, setUsers] = useState([]);
   useEffect(() => {
-    const getUsers = async () => {
-      const response = await getusers();
+    const getUsers = async (setToasts) => {
+      const response = await getusers(setToasts);
+      if (!response) return;
       setUsers(response);
     };
-    getUsers();
+    getUsers(setToasts);
   }, []);
   return (
     <main
@@ -39,9 +40,15 @@ export default function Explore() {
           </div>
           <div className="bg-white rounded-lg shadow-sm border border-stone-100 divide-y divide-stone-50 overflow-hidden">
             {users.map((user, id) => (
-              <UserCard key={id} username={user.username} id={user.id} />
+              <UserCard
+                key={id}
+                username={user.username}
+                id={user.id}
+                setToasts={setToasts}
+                openroom={openroom}
+              />
             ))}
-            <UserCard username="kay" id={1} />
+            {/* <UserCard username="kay" id={1} /> */}
           </div>
         </section>
       </div>

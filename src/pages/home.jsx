@@ -14,7 +14,7 @@ export default function HomePage() {
             ImageUrl={null}
             Url="https://tic-tac-toe-eight-gray-78.vercel.app"
           />
-          <ProjectCard Name="Music App" ImageUrl={null} Url="" />
+          <ProjectCard Name="Realtime Chat App" ImageUrl={null} Url="/chat" />
           {/* <ProjectCard Name="Todo App" ImageUrl={null} Url="" />
           <ProjectCard Name="Todo App" ImageUrl={null} Url="" />
           <ProjectCard Name="Todo App" ImageUrl={null} Url="" />

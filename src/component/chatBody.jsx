@@ -6,6 +6,7 @@ import { getRooms } from "../API";
 export default function ChatBody({ openRoom }) {
   const [chatRooms, setChatRooms] = useState([]);
   const user = JSON.parse(sessionStorage.getItem("token"));
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function intializeRooms() {
@@ -41,20 +42,30 @@ export default function ChatBody({ openRoom }) {
             className="w-full h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
             placeholder="Search conversations..."
             type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
           />
         </div>
       </div>
       <div className=" flex flex-col gap-2">
-        {chatRooms.map((room, id) => (
-          <ChatRoom
-            key={id}
-            id={room.uuid}
-            title={returnRoomTitle(room, user)}
-            onClick={(e) => {
-              openRoom(e, room.uuid, returnRoomTitle(room, user));
-            }}
-          />
-        ))}
+        {chatRooms.map(
+          (room, id) =>
+            returnRoomTitle(room, user)
+              .toLowerCase()
+              .startsWith(searchQuery) && (
+              <ChatRoom
+                key={id}
+                id={room.uuid}
+                title={returnRoomTitle(room, user)}
+                onClick={(e) => {
+                  openRoom(e, room.uuid, returnRoomTitle(room, user));
+                }}
+              />
+            ),
+        )}
+        {chatRooms.length === 0 && "You have no firends yet"}
         {/* <ChatRoom
           id="177345b3-8669-4104-b0a9-45f8466f031e"
           title="kehinde oyeniyi2"

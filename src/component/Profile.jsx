@@ -1,26 +1,62 @@
 import React from "react";
-import { useState } from "react";
-import { changepassword, updateusername } from "../API";
-import { StrengthBar, ValidatePassword } from "./chatAuth";
-export default function Profile() {
+import { useState, useEffect } from "react";
+import { changepassword, updateusername, getuserprofile } from "../API";
+import { StrengthBar, ValidatePassword, PasswordField } from "./chatAuth";
+export function Button({ text, className, style, buttonDisabled }) {
+  // console.log(buttonDisabled);
+  return (
+    <button
+      style={{ ...style, background: buttonDisabled && "rgb(181 178 3 / 94%)" }}
+      className={className}
+      disabled={buttonDisabled}
+    >
+      {text}
+    </button>
+  );
+}
+export default function Profile({ setToasts }) {
   const [passwordInput, setPasswordInput] = useState("");
   const [confirmPasswordInput, setConfirmPasswordInput] = useState("");
   const [passwordFormOpened, setPasswordFormOpened] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [userFormOpened, setUserFormOpened] = useState(false);
-
-  const changePassword = async (e) => {
+  // const [passwordFormDisabled,setPasswordFormDisabled] = useState(false)
+  const [userProfile, setUserProfile] = useState({});
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const username = JSON.parse(sessionStorage.getItem("token"))?.user_name;
+  useEffect(() => {
+    const intializeProfile = async (setToasts) => {
+      const data = await getuserprofile(setToasts);
+      setUserProfile(data);
+    };
+    intializeProfile(setToasts);
+  }, []);
+  const changePassword = async (e, setToasts, setButtonDisabled) => {
     e.preventDefault();
+    setButtonDisabled(true);
     const formData = new FormData();
     formData.append("new_password1", passwordInput);
     formData.append("new_password2", confirmPasswordInput);
-    await changepassword(formData);
+    console.log();
+    const response = await changepassword(
+      formData,
+      setToasts,
+      setButtonDisabled,
+    );
+    setPasswordFormOpened(false);
   };
-  const updateUsername = async (e) => {
+  const updateUsername = async (e, setToasts, setButtonDisabled) => {
     e.preventDefault();
+    setButtonDisabled(true);
+    console.log("updating");
     const formData = new FormData();
     formData.append("username", usernameInput);
-    await updateusername(formData);
+    const response = await updateusername(
+      formData,
+      setToasts,
+      setButtonDisabled,
+    );
+    setUserFormOpened(false);
   };
   return (
     <>
@@ -40,7 +76,7 @@ export default function Profile() {
             </div>
           </div>
           <h1 className="font-display-sm text-display-sm text-on-background mb-1">
-            Alex Rivera
+            {username}
           </h1>
         </section>
 
@@ -50,7 +86,7 @@ export default function Profile() {
         >
           <div className="bg-surface-container-lowest p-4 rounded-lg flex flex-col items-center border border-surface-container-high">
             <span className="font-title-md text-title-md text-primary">
-              124
+              {userProfile?.room_count}
             </span>
             <span className="font-caption-xs text-caption-xs uppercase text-on-surface-variant">
               Contacts
@@ -58,7 +94,7 @@ export default function Profile() {
           </div>
           <div className="bg-surface-container-lowest p-4 rounded-lg flex flex-col items-center border border-surface-container-high">
             <span className="font-title-md text-title-md text-primary">
-              1.2k
+              {userProfile?.message_count}
             </span>
             <span className="font-caption-xs text-caption-xs uppercase text-on-surface-variant">
               Messages
@@ -107,7 +143,7 @@ export default function Profile() {
           {userFormOpened && (
             <form
               onSubmit={(e) => {
-                updateUsername(e);
+                updateUsername(e, setToasts, setButtonDisabled);
               }}
               style={{ padding: "2rem" }}
               action=""
@@ -122,12 +158,12 @@ export default function Profile() {
                 }}
                 required
               />
-              <button
+              <Button
                 style={{ padding: "10px", marginTop: "5px" }}
                 className="rounded-full bg-primary-container text-black"
-              >
-                Change
-              </button>
+                text="Change"
+                buttonDisabled={buttonDisabled}
+              />
             </form>
           )}
 
@@ -165,43 +201,48 @@ export default function Profile() {
           {passwordFormOpened && (
             <form
               onSubmit={(e) => {
-                changePassword(e);
+                changePassword(e, setToasts, setButtonDisabled);
               }}
-              style={{ padding: "2rem" }}
+              style={{
+                padding: "2rem",
+                display: "flex",
+                gap: "5px",
+                flexDirection: "column",
+              }}
               action=""
             >
-              <input
-                className="w-full mb-2 h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
-                type="password"
+              <PasswordField
                 value={passwordInput}
                 placeholder="Enter New Password..."
                 onChange={(e) => {
                   console.log(e.target.value);
                   setPasswordInput(e.target.value);
                 }}
-                required
               />
-              <input
-                className="w-full h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
-                type="password"
+
+              <PasswordField
                 placeholder="Confirm New Password....."
                 value={confirmPasswordInput}
                 onChange={(e) => {
                   setConfirmPasswordInput(e.target.value);
                 }}
-                required
               />
               <StrengthBar value={passwordInput} />
               <ValidatePassword
                 password1={passwordInput}
                 password2={confirmPasswordInput}
               />
-              <button
+              <Button
+                style={{ padding: "10px", marginTop: "5px" }}
+                className="rounded-full bg-primary-container text-black"
+                text="  Change Password"
+              />
+              {/* <button
                 style={{ padding: "10px", marginTop: "5px" }}
                 className="rounded-full bg-primary-container text-black"
               >
-                Change Password
-              </button>
+              
+              </button> */}
             </form>
           )}
         </div>

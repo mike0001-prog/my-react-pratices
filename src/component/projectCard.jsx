@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Link } from "react-router";
 export default function ProjectCard({ Name, Url, ImageUrl }) {
   return (
     <div className="project-card-wrapper">
@@ -10,7 +10,8 @@ export default function ProjectCard({ Name, Url, ImageUrl }) {
         <h3>{Name}</h3>
       </div>
       <div className="project-card-action">
-        <a href={Url}>Visit</a>
+        {/* <a href={Url}>Visit</a> */}
+        <Link to={Url}>Visit</Link>
       </div>
     </div>
   );

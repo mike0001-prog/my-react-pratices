@@ -3,11 +3,13 @@ import Message from "./Message";
 import ChatMessage from "./chatMessage";
 import { useEffect, useState } from "react";
 import { createMessage } from "../API";
+
 export default function ChatMessageList({
   currentChat,
   closeRoom,
   chatMessage,
   user,
+  setChatMessage,
 }) {
   const user_id = JSON.parse(sessionStorage.getItem("token"))?.user;
   const [messageInput, setMessageInput] = useState("");
@@ -19,7 +21,23 @@ export default function ChatMessageList({
     formData.append("content", messageInput);
     formData.append("sender", userId);
     const response = await createMessage(e, currentChat, formData);
+    if (!response) return;
+    setMessageInput("");
+    setChatMessage((prevMessages) => {
+      const updatedMessages = [...prevMessages, response];
+      return updatedMessages;
+    });
   }
+  const parseTime = (timestamp) => {
+    const hours = new Date(timestamp).getHours();
+    const minutes = new Date(timestamp).getMinutes();
+    let symbol = "AM";
+    if (hours > 12) {
+      symbol = "PM";
+      return `${hours - 12}: ${minutes > 10 ? minutes : "0" + minutes} ${symbol}`;
+    }
+    return `${hours}:${minutes > 10 ? minutes : "0" + minutes} ${symbol}`;
+  };
   return (
     <section
       style={{
@@ -61,11 +79,11 @@ export default function ChatMessageList({
       {/* <!-- Message Feed --> */}
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
         {/* <!-- Date Separator --> */}
-        <div className="flex justify-center">
+        {/* <div className="flex justify-center">
           <span className="px-4 py-1 rounded-full bg-[#f0f0e8] dark:bg-[#3d3c2a] text-[#8c8b5f] text-[10px] font-bold uppercase tracking-wider">
             Today
           </span>
-        </div>
+        </div> */}
         {/* <!-- Recipient Message --> */}
         {/* <div className="flex items-end gap-3 max-w-[80%]">
           <div
@@ -106,7 +124,7 @@ export default function ChatMessageList({
           <ChatMessage
             key={id}
             text={message.content}
-            time="12:30 PM"
+            time={parseTime(message.created_at)}
             is_sender={message.sender == user_id}
           />
         ))}

@@ -4,7 +4,7 @@
 //     console.log(response.json());
 //   }
 // }
-
+const BACKEND_URL = "http://127.0.0.1:8000";
 function getTodoData(URL, setTodoListData) {
   fetch(URL)
     .then((data) => data.json())
@@ -25,8 +25,8 @@ function getTodoListItemData(URL, setTodoListItemData) {
     });
 }
 // chat demo
-function connectWebSocket() {
-  const socket = new WebSocket(`ws://127.0.0.1:8000/ws/main/`);
+function connectWebSocket(token) {
+  const socket = new WebSocket(`ws://127.0.0.1:8000/ws/main/?token=${token}`);
   socket.onerror = (error) => {
     console.error(`something went wrong ${error}`);
   };
@@ -44,24 +44,34 @@ function connectWebSocket() {
 }
 const token = JSON.parse(sessionStorage.getItem("token"))?.key;
 
-async function changepassword(data) {
+async function changepassword(data, setToasts, setButtonDisabled) {
+  console.log(token);
   try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/main/user/change_password/",
-      {
-        headers: { Authorization: `Token ${token}` },
-        method: "POST",
-        body: data,
-      },
-    );
+    const response = await fetch(`${BACKEND_URL}/main/user/change_password/`, {
+      headers: { Authorization: `Token ${token}` },
+      method: "PUT",
+      body: data,
+    });
     if (response.ok) {
+      const res = await response.json();
       setToasts([
         {
           variant: "success",
-          message: "password changed sucessfully",
+          message: `${res.msg}`,
           title: "settings",
         },
       ]);
+    }
+    if (response.status == 400) {
+      const res = await response.json();
+      setToasts({
+        variant: "error",
+        message: `${res.msg}`,
+        title: "settings",
+      });
+      setTimeout(() => {
+        setButtonDisabled(false);
+      }, 1000);
     }
   } catch (error) {
     setToasts([
@@ -73,23 +83,40 @@ async function changepassword(data) {
     ]);
   }
 }
-async function updateusername(data) {
+async function updateusername(data, setToasts, setButtonDisabled) {
   try {
-    const response = fetch("http://127.0.0.1:8000/main/user/change_username/", {
+    const response = await fetch(`${BACKEND_URL}/main/user/change_username/`, {
       headers: { Authorization: `Token ${token}` },
-      method: "POST",
+      method: "PUT",
       body: data,
     });
     if (response.ok) {
-      const data = await response.json();
+      const res = await response.json();
       setToasts([
         {
+          id: 2,
           variant: "success",
-          message: "username updated ",
+          message: `${res.msg}`,
           title: "settings",
         },
       ]);
-      console.log(data);
+      console.log(res);
+    }
+    const status = response.status;
+    if (status == 400) {
+      const res = await response.json();
+      console.log(res.msg);
+      setToasts([
+        {
+          id: 1,
+          variant: "error",
+          message: `${res.msg}`,
+          title: "settings",
+        },
+      ]);
+      setTimeout(() => {
+        setButtonDisabled(false);
+      }, 3500);
     }
   } catch (error) {
     setToasts([
@@ -103,11 +130,12 @@ async function updateusername(data) {
   }
 }
 async function getMessages(roomId) {
-  console.log(token, JSON.parse(sessionStorage.getItem("token")));
-  console.log(roomId);
+  // console.log(token);
+  // console.log(roomId);
+  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/main/room/${roomId}/messages/`,
+      `${BACKEND_URL}/main/room/${roomId}/messages/`,
       {
         headers: { Authorization: `Token ${token}` },
       },
@@ -125,7 +153,7 @@ async function getRooms() {
   const token = JSON.parse(sessionStorage.getItem("token"))?.key;
   // console.log(token, JSON.parse(sessionStorage.getItem("token")));
   try {
-    const response = await fetch(`http://127.0.0.1:8000/main/rooms/`, {
+    const response = await fetch(`${BACKEND_URL}/main/rooms/`, {
       headers: { Authorization: `Token ${token}` },
     });
     if (response.ok) {
@@ -198,11 +226,28 @@ async function Signup(url, body, setToasts, setIsDisabled) {
       setToasts([
         {
           variant: "success",
-          message: "signed in sucessfully",
+          message: `${msg}`,
           title: "sign in",
         },
       ]);
       return data;
+    }
+    if (response.status == 400) {
+      const res = await response.json();
+
+      const messages = [...Object.values(res)].map((item, id) => ({
+        id: id,
+        variant: "error",
+        message: item,
+        title: "sign in",
+      }));
+
+      console.log(res);
+      setToasts(messages);
+      setTimeout(() => {
+        setIsDisabled(false);
+        // console.log(
+      }, 700);
     }
   } catch (error) {
     setToasts([
@@ -222,26 +267,24 @@ async function Signup(url, body, setToasts, setIsDisabled) {
 }
 async function createMessage(e, roomId, data) {
   const token = JSON.parse(sessionStorage.getItem("token"))?.key;
-  const response = await fetch(
-    `http://127.0.0.1:8000/main/room/${roomId}/messages/`,
-    {
-      headers: { Authorization: `Token ${token}` },
-      method: "POST",
-      body: data,
-    },
-  );
+  const response = await fetch(`${BACKEND_URL}/main/room/${roomId}/messages/`, {
+    headers: { Authorization: `Token ${token}` },
+    method: "POST",
+    body: data,
+  });
   if (response.ok) {
     const data = await response.json();
-    return data;
+
     console.log(data);
+    return data;
   }
 }
 
-async function getusers() {
+async function getusers(setToasts) {
   const token = JSON.parse(sessionStorage.getItem("token"))?.key;
   // console.log(token, JSON.parse(sessionStorage.getItem("token")));
   try {
-    const response = await fetch(`http://127.0.0.1:8000/main/users/`, {
+    const response = await fetch(`${BACKEND_URL}/main/users/`, {
       headers: { Authorization: `Token ${token}` },
     });
     if (response.ok) {
@@ -250,24 +293,91 @@ async function getusers() {
       return data;
     }
   } catch (error) {
+    setToasts([
+      {
+        id: 21,
+        variant: "error",
+        message: `something went wrong`,
+        title: "explore",
+      },
+    ]);
     console.error(`something went wrong ${error}`);
   }
 }
-async function connectRoom(data) {
+async function connectRoom(data, setButtonDisabled, setToasts) {
+  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
+  console.log(token);
   try {
-    const response = fetch("", {
+    const response = await fetch(`${BACKEND_URL}/main/rooms/`, {
       headers: { Authorization: `Token ${token}` },
       body: data,
       method: "POST",
     });
     if (response.ok) {
-      // console.log("")
+      const data = await response.json();
+      setToasts([
+        {
+          id: 21,
+          variant: "success",
+          message: `${data.user_two_name} is now a friend`,
+          title: "sign in",
+        },
+      ]);
+      console.log(data);
+      return data;
+    }
+    if (response.status == 400) {
+      setToasts([
+        {
+          id: 21,
+          variant: "error",
+          message: ``,
+          title: "sign in",
+        },
+      ]);
+      setTimeout(() => {
+        setButtonDisabled(false);
+      }, 1500);
     }
   } catch (error) {
+    setToasts([
+      {
+        id: 21,
+        variant: "error",
+        message: "something went wrong",
+        title: "sign in",
+      },
+    ]);
+    setTimeout(() => {
+      setButtonDisabled(false);
+    }, 1500);
     console.log(error);
   }
 }
+async function getuserprofile(setToasts) {
+  try {
+    const response = await fetch(`${BACKEND_URL}/main/user/profile/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    }
+  } catch (error) {
+    setToasts([
+      {
+        id: 21,
+        variant: "error",
+        message: "error gettting profile",
+        title: "sign in",
+      },
+    ]);
+    console.error(error);
+  }
+}
 export {
+  getuserprofile,
   createMessage,
   getTodoData,
   getTodoListItemData,

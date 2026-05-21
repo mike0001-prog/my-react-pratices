@@ -77,7 +77,13 @@ function InputField({
   );
 }
 
-function PasswordField({ id, placeholder, autoComplete, onChange, value }) {
+export function PasswordField({
+  id,
+  placeholder,
+  autoComplete,
+  onChange,
+  value,
+}) {
   const [visible, setVisible] = useState(false);
   return (
     <InputField
@@ -471,11 +477,10 @@ function SignInPanel({ onSwitch, setIsLoggedIn, setToasts, websocket }) {
     if (!response) return;
 
     setTimeout(() => {
-      websocket.current = connectWebSocket();
-      if (websocket.current) {
-        sessionStorage.setItem("token", JSON.stringify(response));
-        setIsLoggedIn(true);
-      }
+      sessionStorage.setItem("token", JSON.stringify(response));
+      setIsLoggedIn(true);
+      const token = JSON.parse(sessionStorage.getItem("token")).key;
+      websocket.current = connectWebSocket(token);
     }, 1500);
   }
   return (
@@ -606,13 +611,18 @@ function SignUpPanel({ onSwitch, setToasts }) {
   async function signup(e, url) {
     e.preventDefault();
     const formData = new FormData();
-    // formData.append("lastname", lastname);
+    formData.append("password2", password2);
     formData.append("username", username);
     formData.append("email", email);
     formData.append("password", password);
     setIsDisabled(true);
     const data = await Signup(url, formData, setToasts, setIsDisabled);
-    console.log(data);
+    if (!data) return;
+    setIsDisabled(false);
+    setPassword("");
+    setUsername("");
+    setEmail("");
+    setPassword2("");
   }
   //    const []
   return (

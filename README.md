@@ -1,17 +1,194 @@
-# React + Vite
+# Real-Time Chat Application — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern real-time chat frontend built with React.
 
-Currently, two official plugins are available:
+This application provides a responsive user interface for messaging, authentication, conversation management, and real-time communication powered by WebSockets.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Architecture Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The frontend communicates with the Django backend using:
 
-## Expanding the ESLint configuration
+* REST APIs for persistence and authentication
+* WebSockets for real-time communication
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# my-react-pratices
+Backend Repository:
+
+* Built with Django + Django Channels
+* Handles APIs, authentication, persistence, and real-time broadcasting
+
+---
+
+## Tech Stack
+
+* React
+* JavaScript
+* Axios
+* WebSockets
+* Context API / State Management
+* CSS / Modern UI Design
+
+---
+
+## Core Features
+
+* User authentication
+* Real-time messaging
+* Conversation management
+* Persistent chat history
+* Offline message loading
+* Responsive modern interface
+* WebSocket-based communication
+
+---
+
+## Frontend Responsibilities
+
+The frontend is responsible for:
+
+* Rendering the user interface
+* Managing user sessions
+* Maintaining WebSocket connections
+* Displaying real-time updates
+* Sending messages to backend APIs
+* Loading historical messages
+
+---
+
+## Application Flow
+
+### Authentication Flow
+
+1. User logs in via REST API
+2. JWT token is stored
+3. User session is initialized
+4. WebSocket connection is established
+
+---
+
+### Messaging Flow
+
+1. User sends a message
+2. Frontend calls backend API
+3. Backend persists the message
+4. Backend broadcasts event via WebSocket
+5. Receiver gets instant UI update
+
+---
+
+## Project Structure
+
+```bash
+frontend/
+│
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   ├── websocket/
+│   ├── context/
+│   ├── hooks/
+│   └── utils/
+│
+├── public/
+└── package.json
+```
+
+---
+
+## WebSocket Integration
+
+The frontend maintains persistent WebSocket connections for:
+
+* Receiving messages instantly
+* Presence updates
+* Real-time conversation synchronization
+
+Each authenticated user connects to their dedicated communication room managed by the backend.
+
+---
+
+## Running the Project
+
+### Clone Repository
+
+```bash
+git clone <frontend-repo-url>
+cd frontend
+```
+
+---
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+### Configure Environment Variables
+
+Create a `.env` file:
+
+```env
+REACT_APP_API_URL=http://localhost:8000/api
+REACT_APP_WS_URL=ws://localhost:8000/ws
+```
+
+---
+
+### Start Development Server
+
+```bash
+npm start
+```
+
+---
+
+## Relationship With Backend
+
+This frontend depends on the Django backend for:
+
+### REST APIs
+
+* Authentication
+* Conversation retrieval
+* Message persistence
+* User management
+
+### WebSockets
+
+* Real-time communication
+* Instant message delivery
+* Presence management
+
+---
+
+## Design Goals
+
+The frontend was designed with focus on:
+
+* Responsive UI/UX
+* Real-time responsiveness
+* Clean component architecture
+* Scalable state management
+* Reliable socket communication
+
+---
+
+## Future Improvements
+
+* Message notifications
+* Dark mode
+* Typing indicators
+* Read receipts
+* Media sharing
+* Push notifications
+
+---
+
+## License
+
+MIT License

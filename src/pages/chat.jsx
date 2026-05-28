@@ -27,6 +27,7 @@ export default function Chat() {
   const [currentChat, setCurrentChat] = useState();
   const [navstate, setNavstate] = useState("chat_body");
   const [currentUser, setCurrentUser] = useState("");
+  const [userState, setUserState] = useState("");
 
   if (websocket.current) {
     websocket.current.onmessage = (event) => {
@@ -34,15 +35,29 @@ export default function Chat() {
       console.log(typeof event.data);
       const message = JSON.parse(event.data);
       console.log(message);
-      setChatMessage((prevMessages) => {
-        const updatedMessages = [...prevMessages, message.data.data];
-        return updatedMessages;
-      });
+
+      if (message.type == "suscribe_room") {
+        setChatMessage((prevMessages) => {
+          const updatedMessages = [...prevMessages, message.data.data];
+          return updatedMessages;
+        });
+      }
+      console.log(message.data.type);
+      if (message.data.type == "typing_signal") {
+        setUserState("typing");
+        setTimeout(() => {
+          setUserState("");
+        }, 2000);
+      }
     };
   } else if (IsLoggedIn && !websocket.current) {
     const token = JSON.parse(sessionStorage.getItem("token")).key;
     websocket.current = connectWebSocket(token);
   }
+  const sendTypingSignal = () => {
+    const data = { type: "typing_signal", reciever: currentUser };
+    websocket.current.send(JSON.stringify(data));
+  };
   const logout = () => {
     setIsLoggedIn(false);
     sessionStorage.clear();
@@ -95,6 +110,8 @@ export default function Chat() {
           closeRoom={closeRoom}
           chatMessage={chatMessage}
           setChatMessage={setChatMessage}
+          sendTypingSignal={sendTypingSignal}
+          userState={userState}
         />
       ) : (
         <div className="body bg-surface text-on-surface overflow-x-hidden">

@@ -1,10 +1,11 @@
 import React from "react";
 import { UserCard } from "./userCard";
-import { getusers } from "../API";
+import { getusers, searchUsers } from "../API";
 import { useState, useEffect } from "react";
 
 export default function Explore({ setToasts, openroom }) {
   const [users, setUsers] = useState([]);
+  // const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     const getUsers = async (setToasts) => {
       const response = await getusers(setToasts);
@@ -13,6 +14,21 @@ export default function Explore({ setToasts, openroom }) {
     };
     getUsers(setToasts);
   }, []);
+
+  const searchusers = async (searchQuery) => {
+    console.log(searchQuery);
+    if (!(searchQuery.length >= 3)) return;
+    const response = await searchUsers(searchQuery);
+    if (!response) return;
+    setUsers(response);
+  };
+  const debounce = (searchQuery) => {
+    let timeoutId;
+    clearTimeout(timeoutId);
+    setTimeout(() => {
+      searchusers(searchQuery);
+    }, 1000);
+  };
   return (
     <main
       className="pt-20 pb-24 px-4 min-h-screen"
@@ -28,6 +44,10 @@ export default function Explore({ setToasts, openroom }) {
               className="w-full h-12 pl-12 pr-4 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md outline-none"
               placeholder="Search for people..."
               type="text"
+              onChange={(e) => {
+                // console.log(e.target.value);
+                debounce(e.target.value);
+              }}
             />
           </div>
         </div>

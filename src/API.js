@@ -355,6 +355,7 @@ async function connectRoom(data, setButtonDisabled, setToasts) {
   }
 }
 async function getuserprofile(setToasts) {
+  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
   try {
     const response = await fetch(`${BACKEND_URL}/main/user/profile/`, {
       headers: { Authorization: `Token ${token}` },
@@ -376,6 +377,33 @@ async function getuserprofile(setToasts) {
     console.error(error);
   }
 }
+async function searchUsers(searchQuery) {
+  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
+
+  try {
+    const response = await fetch(
+      `${BACKEND_URL}/main/users/?search=${encodeURIComponent(searchQuery)}`,
+      {
+        headers: { Authorization: `Token ${token}` },
+      },
+    );
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    }
+  } catch (error) {
+    setToasts([
+      {
+        id: 21,
+        variant: "error",
+        message: `something went wrong`,
+        title: "explore",
+      },
+    ]);
+    console.error(`something went wrong ${error}`);
+  }
+}
 export {
   getuserprofile,
   createMessage,
@@ -390,4 +418,5 @@ export {
   updateusername,
   getusers,
   connectRoom,
+  searchUsers,
 };

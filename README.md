@@ -1,4 +1,13 @@
-# Real-Time Chat Application — Frontend
+# COMPILATION OF MY REACT PRACTICES AND PROJECTS
+
+EACH PRATICES IN THIS REACT APPLICATION HAS A SEPERATE PAGE FOR ITS OWN LOGIC
+
+# 1 TodoList App — Frontend
+
+a simple todolist app that portrays all the basic crud operation
+like update, read, delete and also implementation of searching, ordering and filtering
+
+# 2 Real-Time Chat Application — Frontend
 
 A modern real-time chat frontend built with React.
 
@@ -10,36 +19,35 @@ This application provides a responsive user interface for messaging, authenticat
 
 The frontend communicates with the Django backend using:
 
-* REST APIs for persistence and authentication
-* WebSockets for real-time communication
+- REST APIs for persistence and authentication
+- WebSockets for real-time communication
 
 Backend Repository:
 
-* Built with Django + Django Channels
-* Handles APIs, authentication, persistence, and real-time broadcasting
+- Built with Django + Django Channels
+- Handles APIs, authentication, persistence, and real-time broadcasting
 
 ---
 
 ## Tech Stack
 
-* React
-* JavaScript
-* Axios
-* WebSockets
-* Context API / State Management
-* CSS / Modern UI Design
+- React
+- JavaScript
+- WebSockets
+- Context API / State Management
+- CSS / Modern UI Design
 
 ---
 
 ## Core Features
 
-* User authentication
-* Real-time messaging
-* Conversation management
-* Persistent chat history
-* Offline message loading
-* Responsive modern interface
-* WebSocket-based communication
+- User authentication
+- Real-time messaging
+- Conversation management
+- Persistent chat history
+- Offline message loading
+- Responsive modern interface
+- WebSocket-based communication
 
 ---
 
@@ -47,12 +55,12 @@ Backend Repository:
 
 The frontend is responsible for:
 
-* Rendering the user interface
-* Managing user sessions
-* Maintaining WebSocket connections
-* Displaying real-time updates
-* Sending messages to backend APIs
-* Loading historical messages
+- Rendering the user interface
+- Managing user sessions
+- Maintaining WebSocket connections
+- Displaying real-time updates
+- Sending messages to backend APIs
+- Loading historical messages
 
 ---
 
@@ -101,9 +109,9 @@ frontend/
 
 The frontend maintains persistent WebSocket connections for:
 
-* Receiving messages instantly
-* Presence updates
-* Real-time conversation synchronization
+- Receiving messages instantly
+- Presence updates
+- Real-time conversation synchronization
 
 Each authenticated user connects to their dedicated communication room managed by the backend.
 
@@ -114,7 +122,7 @@ Each authenticated user connects to their dedicated communication room managed b
 ### Clone Repository
 
 ```bash
-git clone <frontend-repo-url>
+git clone https://github.com/mike0001-prog/my-react-pratices.git
 cd frontend
 ```
 
@@ -133,8 +141,8 @@ npm install
 Create a `.env` file:
 
 ```env
-REACT_APP_API_URL=http://localhost:8000/api
-REACT_APP_WS_URL=ws://localhost:8000/ws
+REACT_APP_API_URL=http://127.0.0.1:8000/main
+REACT_APP_WS_URL=ws://127.0.0.1:8000/ws/main/
 ```
 
 ---
@@ -153,16 +161,16 @@ This frontend depends on the Django backend for:
 
 ### REST APIs
 
-* Authentication
-* Conversation retrieval
-* Message persistence
-* User management
+- Authentication
+- Conversation retrieval
+- Message persistence
+- User management
 
 ### WebSockets
 
-* Real-time communication
-* Instant message delivery
-* Presence management
+- Real-time communication
+- Instant message delivery
+- Presence management
 
 ---
 
@@ -170,22 +178,20 @@ This frontend depends on the Django backend for:
 
 The frontend was designed with focus on:
 
-* Responsive UI/UX
-* Real-time responsiveness
-* Clean component architecture
-* Scalable state management
-* Reliable socket communication
+- Responsive UI/UX
+- Real-time responsiveness
+- Clean component architecture
 
 ---
 
 ## Future Improvements
 
-* Message notifications
-* Dark mode
-* Typing indicators
-* Read receipts
-* Media sharing
-* Push notifications
+- Message notifications
+- Dark mode
+- Typing indicators
+- Read receipts
+- Media sharing
+- Push notifications
 
 ---
 

@@ -4,7 +4,10 @@
 //     console.log(response.json());
 //   }
 // }
-const BACKEND_URL = "http://127.0.0.1:8000";
+// import env
+const BACKEND_URL = import.meta.env.REACT_API_URL
+  ? import.meta.env.REACT_API_URL
+  : "http://127.0.0.1:8000";
 function getTodoData(URL, setTodoListData) {
   fetch(URL)
     .then((data) => data.json())

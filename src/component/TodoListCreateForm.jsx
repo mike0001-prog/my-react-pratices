@@ -13,7 +13,6 @@ export default function TodoListCreateForm({
       onSubmit={(e) => {
         createTodo(e);
       }}
-      action="http://127.0.0.1:8000/main/create_list/"
       method="post"
     >
       <h2>Todo App</h2>

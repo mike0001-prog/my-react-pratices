@@ -58,7 +58,7 @@ nav {
 .main {
   min-height: 100vh;
   display: grid;
-  grid-template-rows: 25vh 70vh 5vh;
+  grid-template-rows: 30vh 65vh 5vh;
 }
 ul li {
   list-style: none;

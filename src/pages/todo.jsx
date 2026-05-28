@@ -1,6 +1,6 @@
 import React from "react";
 import TodoList from "../component/Todolist";
-import { getTodoData, getTodoListItemData } from "../API";
+import { getTodoData, getTodoListItemData, BACKEND_URL } from "../API";
 import { useState, useEffect } from "react";
 import TodoListItem from "../component/TodoListItem";
 import Footer from "../component/footer";
@@ -30,7 +30,7 @@ export default function Todo() {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/main/create_list/")
+    fetch(`${BACKEND_URL}/main/create_list/`)
       .then((data) => data.json())
       .then((data) => {
         localStorage.setItem("todo-list-data", JSON.stringify(data));
@@ -43,7 +43,7 @@ export default function Todo() {
     console.log("rendered");
   }, []);
 
-  // "http://127.0.0.1:8000/main/create_list/"
+  // "${BACKEND_URL}/main/create_list/"
   // function getTodoData(URL, setTodoListData) {
   //   fetch(URL)
   //     .then((data) => data.json())
@@ -59,7 +59,7 @@ export default function Todo() {
     // formData.append("user", 1);
     formData.append("title", Input);
     try {
-      const response = await fetch("http://127.0.0.1:8000/main/create_list/", {
+      const response = await fetch(`${BACKEND_URL}/main/create_list/`, {
         method: "POST",
         body: formData,
       });
@@ -77,7 +77,7 @@ export default function Todo() {
     console.log("SETTING INPUT ... TO EMPTY STRING");
     setInput("");
     // localStorage.removeItem("todo-list-data");
-    // getTodoData("http://127.0.0.1:8000/main/create_list/", setTodoListData);
+    // getTodoData("${BACKEND_URL}/main/create_list/", setTodoListData);
 
     // setTodoListData(TodoListData);
   }
@@ -85,15 +85,12 @@ export default function Todo() {
   async function open(e, title) {
     const id = e.target.dataset.id;
     console.log(id);
-    // http://127.0.0.1:8000/main/create_item/1/
+    // ${BACKEND_URL}/main/create_item/1/
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/main/create_item/${id}/`,
-        {
-          method: "GET",
-          headers: { "Content-type": "application/json" },
-        },
-      );
+      const response = await fetch(`${BACKEND_URL}/main/create_item/${id}/`, {
+        method: "GET",
+        headers: { "Content-type": "application/json" },
+      });
       if (response.ok) {
         const data = await response.json();
         setTodoListItemData(data);
@@ -111,10 +108,10 @@ export default function Todo() {
     const formData = new FormData();
     formData.append("todolist", id);
     formData.append("text", taskInputVal);
-    const response = await fetch(
-      `http://127.0.0.1:8000/main/create_item/${id}/`,
-      { method: "POST", body: formData },
-    );
+    const response = await fetch(`${BACKEND_URL}/main/create_item/${id}/`, {
+      method: "POST",
+      body: formData,
+    });
     const data = await response.json();
 
     if (response.ok) {
@@ -123,7 +120,7 @@ export default function Todo() {
         ...prevTodoListItemData,
         data,
       ]);
-      getTodoData("http://127.0.0.1:8000/main/create_list/", setTodoListData);
+      getTodoData(`${BACKEND_URL}/main/create_list/`, setTodoListData);
     }
   }
   function Home() {

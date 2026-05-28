@@ -9,6 +9,10 @@ console.log(import.meta.env.VITE_API_URL);
 const BACKEND_URL = import.meta.env.VITE_API_URL
   ? import.meta.env.VITE_API_URL
   : "http://127.0.0.1:8000";
+const WS_URL = import.meta.env.VITE_WS_URL
+  ? import.meta.env.VITE_WS_URL
+  : "ws://127.0.0.1:8000/ws";
+
 function getTodoData(URL, setTodoListData) {
   fetch(URL)
     .then((data) => data.json())
@@ -30,7 +34,7 @@ function getTodoListItemData(URL, setTodoListItemData) {
 }
 // chat demo
 function connectWebSocket(token) {
-  const socket = new WebSocket(`ws://127.0.0.1:8000/ws/main/?token=${token}`);
+  const socket = new WebSocket(`${WS_URL}/main/?token=${token}`);
   socket.onerror = (error) => {
     console.error(`something went wrong ${error}`);
   };
@@ -423,4 +427,5 @@ export {
   getusers,
   connectRoom,
   searchUsers,
+  BACKEND_URL,
 };

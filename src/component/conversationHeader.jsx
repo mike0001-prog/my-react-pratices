@@ -64,12 +64,12 @@ export default function ConversationHeader({
           />
           <div>
             <h3 className="font-bold text-lg">{user}</h3>
-            <p
+            <div
               style={{ paddingBottom: "1rem" }}
               className="text-xs text-[#078816] font-medium"
             >
               {userState === "typing" ? <TypingIndicator /> : "Online"}
-            </p>
+            </div>
           </div>
         </div>
 

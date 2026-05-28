@@ -34,9 +34,8 @@ export default function Chat() {
       console.log("test");
       console.log(typeof event.data);
       const message = JSON.parse(event.data);
-      console.log(message);
-
-      if (message.type == "suscribe_room") {
+      console.log(message, message.data.type);
+      if (message.data.type == "suscribe_room") {
         setChatMessage((prevMessages) => {
           const updatedMessages = [...prevMessages, message.data.data];
           return updatedMessages;

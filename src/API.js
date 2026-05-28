@@ -33,14 +33,13 @@ function getTodoListItemData(URL, setTodoListItemData) {
     });
 }
 // chat demo
+// connect to websocket function
 function connectWebSocket(token) {
   const socket = new WebSocket(`${WS_URL}/ws/main/?token=${token}`);
   socket.onerror = (error) => {
     console.error(`something went wrong ${error}`);
   };
-  // socket.onmessage = (event) => {
-  //   console.log(event.data);
-  // };
+
   console.log(socket);
   socket.onopen = (e) => {
     socket.send(

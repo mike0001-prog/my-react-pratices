@@ -11,7 +11,7 @@ const BACKEND_URL = import.meta.env.VITE_API_URL
   : "http://127.0.0.1:8000";
 const WS_URL = import.meta.env.VITE_WS_URL
   ? import.meta.env.VITE_WS_URL
-  : "ws://127.0.0.1:8000/ws";
+  : "ws://127.0.0.1:8000";
 
 function getTodoData(URL, setTodoListData) {
   fetch(URL)
@@ -34,7 +34,7 @@ function getTodoListItemData(URL, setTodoListItemData) {
 }
 // chat demo
 function connectWebSocket(token) {
-  const socket = new WebSocket(`${WS_URL}/main/?token=${token}`);
+  const socket = new WebSocket(`${WS_URL}/ws/main/?token=${token}`);
   socket.onerror = (error) => {
     console.error(`something went wrong ${error}`);
   };

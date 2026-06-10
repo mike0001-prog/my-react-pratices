@@ -174,7 +174,7 @@ async function getRooms() {
 }
 async function Login(url, body, setToasts, setIsDisabled) {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${BACKEND_URL}/main/login/`, {
       method: "POST",
       body: body,
       headers: { "Content-Type": "application/json" },
@@ -224,7 +224,7 @@ async function Login(url, body, setToasts, setIsDisabled) {
 }
 async function Signup(url, body, setToasts, setIsDisabled) {
   try {
-    const response = await fetch(url, { body: body, method: "POST" });
+    const response = await fetch(`${BACKEND_URL}/main/signup/`, { body: body, method: "POST" });
 
     if (response.ok) {
       const data = await response.json();

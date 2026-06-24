@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { connectWebSocket, getMessages } from "../API";
+import { connectWebSocket, getMessages, loadMoreMessages } from "../API";
 import ChatHeader from "../component/chatHeader";
 import Footer from "../component/footer";
 import ChatBody from "../component/chatBody";
@@ -12,7 +12,6 @@ import { useState, useRef } from "react";
 import Explore from "../component/Explore";
 import Profile from "../component/Profile";
 
-// import { connectWebSocket } from "../API";
 export default function Chat() {
   const websocket = useRef(null);
   // useEffect(() => {
@@ -28,7 +27,23 @@ export default function Chat() {
   const [navstate, setNavstate] = useState("chat_body");
   const [currentUser, setCurrentUser] = useState("");
   const [userState, setUserState] = useState("");
+  const [nextPage, setNextPage] = useState("");
 
+  async function loadmore(url) {
+    const response = await loadMoreMessages(url);
+    if (!response) return;
+    const messages = response.results;
+    const nextpage = response.next;
+    console.log(nextpage);
+    console.log(messages);
+    setNextPage(nextpage);
+    setChatMessage((prevMessages) => {
+      console.log(messages, prevMessages);
+      const updatedMessages = [...messages, ...prevMessages];
+      console.log(updatedMessages);
+      return updatedMessages;
+    });
+  }
   if (websocket.current) {
     websocket.current.onmessage = (event) => {
       console.log("test");
@@ -73,7 +88,10 @@ export default function Chat() {
     const data = await getMessages(conversationId);
     // console.log(data);
     if (!data) return;
-    setChatMessage(data);
+    const nextPage = data.next;
+    console.log(nextPage);
+    setNextPage(nextPage);
+    setChatMessage(data.results.reverse());
     // sessionStorage.setItem(conversationId,JSON.stringify(data))
     setIsOPen(true);
     setCurrentChat(conversationId);
@@ -111,6 +129,8 @@ export default function Chat() {
           setChatMessage={setChatMessage}
           sendTypingSignal={sendTypingSignal}
           userState={userState}
+          nextPage={nextPage}
+          loadmore={loadmore}
         />
       ) : (
         <div className="body bg-surface text-on-surface overflow-x-hidden">
@@ -130,9 +150,7 @@ export default function Chat() {
           )} */}
 
           {/* <Explore /> */}
-          <button className="fixed bottom-24 right-6 w-14 h-14 bg-primary-container text-black rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform z-40">
-            <span className="material-symbols-outlined text-2xl">add</span>
-          </button>
+
           <ChatNav navState={navstate} setNavstate={setNavstate} />
         </div>
       )}

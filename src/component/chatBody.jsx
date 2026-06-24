@@ -3,7 +3,9 @@ import Message from "./Message";
 import ChatRoom from "./ChatRoom";
 import { useState, useEffect } from "react";
 import { getRooms } from "../API";
-export default function ChatBody({ openRoom }) {
+import { parseTime } from "./chatMessageList";
+
+export default function ChatBody({ openRoom, last_updated }) {
   const [chatRooms, setChatRooms] = useState([]);
   const user = JSON.parse(sessionStorage.getItem("token"));
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,6 +28,16 @@ export default function ChatBody({ openRoom }) {
     if (room.user_two == loggedInUserId) return room.user_one_name;
 
     if (room.user_one == loggedInUserId) return room.user_two_name;
+  };
+  const formatUpdatedTime = (time) => {
+    if (time > 24) {
+      return new Date(time).toDateString();
+    }
+    // const hours = new Date(time).getHours()
+    // const minutes = new Date(time).getMinutes
+    // const symbol = hours > 12? "AM" : "PM";
+    // return `${hours}:${minutes}:${symbol}`;
+    return parseTime(time);
   };
   return (
     <div
@@ -62,6 +74,7 @@ export default function ChatBody({ openRoom }) {
                 onClick={(e) => {
                   openRoom(e, room.uuid, returnRoomTitle(room, user));
                 }}
+                last_updated={formatUpdatedTime(room.updated_at)}
               />
             ),
         )}

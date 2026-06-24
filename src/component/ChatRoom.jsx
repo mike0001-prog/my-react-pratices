@@ -1,6 +1,5 @@
 import React from "react";
-
-export default function ChatRoom({ id, title, onClick }) {
+export default function ChatRoom({ id, title, onClick, last_updated }) {
   return (
     <div
       data-id={id}
@@ -20,7 +19,7 @@ export default function ChatRoom({ id, title, onClick }) {
             {title}
           </h3>
           <span className="text-caption-xs text-on-surface-variant uppercase tracking-wider">
-            15m ago
+            {last_updated}
           </span>
         </div>
         {/* <p className="text-body-sm text-on-surface-variant truncate">

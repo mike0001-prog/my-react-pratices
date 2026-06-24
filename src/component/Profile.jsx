@@ -2,13 +2,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { changepassword, updateusername, getuserprofile } from "../API";
 import { StrengthBar, ValidatePassword, PasswordField } from "./chatAuth";
-export function Button({ text, className, style, buttonDisabled }) {
+export function Button({ text, className, style, buttonDisabled, onClick }) {
   // console.log(buttonDisabled);
   return (
     <button
       style={{ ...style, background: buttonDisabled && "rgb(181 178 3 / 94%)" }}
       className={className}
       disabled={buttonDisabled}
+      onClick={onClick}
     >
       {text}
     </button>

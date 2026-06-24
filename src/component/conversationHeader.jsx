@@ -98,7 +98,7 @@ export default function ConversationHeader({
             {menuOpen && (
               <div
                 role="menu"
-                className="absolute right-0 mt-2 w-52 bg-white dark:bg-[#1a1a0d] border border-[#e5e5e0] dark:border-[#3d3c2a] rounded-2xl overflow-hidden z-50"
+                className="absolute p-4 right-0 mt-2 w-52 bg-white dark:bg-[#1a1a0d] border border-[#e5e5e0] dark:border-[#3d3c2a] rounded-2xl overflow-hidden z-50"
                 style={{
                   boxShadow:
                     "0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04)",

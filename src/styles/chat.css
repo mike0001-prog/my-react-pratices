@@ -213,10 +213,10 @@ div.body {
   padding-right: 10px;
 }
 .pt-20 {
-  padding-top: 80px;
+  padding-top: 5rem;
 }
 .pb-24 {
-  padding-bottom: 96px;
+  padding-bottom: 8rem;
 }
 .pl-12 {
   padding-left: 48px;
@@ -345,4 +345,21 @@ primary-btn-chat
   transition:
     opacity 0.15s ease,
     transform 0.1s ease;
+}
+.msg-form-send {
+}
+.message-list-section {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 20vh 55vh 25vh;
+}
+.msg-form-send input {
+  outline: none;
+}
+button {
+  outline: none;
+}
+.center {
+  display: flex;
+  justify-content: center;
 }

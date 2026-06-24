@@ -224,7 +224,10 @@ async function Login(url, body, setToasts, setIsDisabled) {
 }
 async function Signup(url, body, setToasts, setIsDisabled) {
   try {
-    const response = await fetch(`${BACKEND_URL}/main/signup/`, { body: body, method: "POST" });
+    const response = await fetch(`${BACKEND_URL}/main/signup/`, {
+      body: body,
+      method: "POST",
+    });
 
     if (response.ok) {
       const data = await response.json();
@@ -411,6 +414,42 @@ async function searchUsers(searchQuery) {
     console.error(`something went wrong ${error}`);
   }
 }
+
+async function loadMoreMessages(url) {
+  const token = JSON.parse(sessionStorage.getItem("token"))?.key;
+
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } else {
+      // setToasts([
+      //   {
+      //     id: 21,
+      //     variant: "error",
+      //     message: `error getting messages`,
+      //     title: "messages",
+      //   },
+      // ]);
+      console.log("an error occured");
+    }
+  } catch (error) {
+    // setToasts([
+    //   {
+    //     id: 21,
+    //     variant: "error",
+    //     message: `something went wrong`,
+    //     title: "messages",
+    //   },
+    // ]);
+    console.error(`something went wrong ${error}`);
+  }
+}
+
 export {
   getuserprofile,
   createMessage,
@@ -427,4 +466,5 @@ export {
   connectRoom,
   searchUsers,
   BACKEND_URL,
+  loadMoreMessages,
 };

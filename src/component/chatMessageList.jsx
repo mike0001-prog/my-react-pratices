@@ -2,9 +2,10 @@ import React from "react";
 import Message from "./Message";
 import ChatMessage from "./chatMessage";
 import { useEffect, useState } from "react";
-import { createMessage } from "../API";
+import { createMessage, loadMoreMessages } from "../API";
 import ConversationHeader from "./conversationHeader";
-
+import { Button } from "./Profile";
+import { useRef } from "react";
 function DateDivider({ date }) {
   return (
     <>
@@ -16,7 +17,16 @@ function DateDivider({ date }) {
     </>
   );
 }
-
+export const parseTime = (timestamp) => {
+  const hours = new Date(timestamp).getHours();
+  const minutes = new Date(timestamp).getMinutes();
+  let symbol = "AM";
+  if (hours > 12) {
+    symbol = "PM";
+    return `${hours - 12}: ${minutes > 10 ? minutes : "0" + minutes} ${symbol}`;
+  }
+  return `${hours}:${minutes > 10 ? minutes : "0" + minutes} ${symbol}`;
+};
 export default function ChatMessageList({
   currentChat,
   closeRoom,
@@ -25,9 +35,17 @@ export default function ChatMessageList({
   setChatMessage,
   sendTypingSignal,
   userState,
+  nextPage,
+  loadmore,
 }) {
+  const scrollDiv = useRef(null);
+
+  useEffect(() => {
+    scrollDiv.current?.scrollIntoView({ behaviour: "auto" });
+  }, [chatMessage]);
   const user_id = JSON.parse(sessionStorage.getItem("token"))?.user;
   const [messageInput, setMessageInput] = useState("");
+  // const [buttonDisabled, setuttonDisabled] = useState(nextPage ? true : false);
   async function sendMessage(e, currentChat) {
     e.preventDefault();
 
@@ -44,18 +62,12 @@ export default function ChatMessageList({
       return updatedMessages;
     });
   }
-  const parseTime = (timestamp) => {
-    const hours = new Date(timestamp).getHours();
-    const minutes = new Date(timestamp).getMinutes();
-    let symbol = "AM";
-    if (hours > 12) {
-      symbol = "PM";
-      return `${hours - 12}: ${minutes > 10 ? minutes : "0" + minutes} ${symbol}`;
-    }
-    return `${hours}:${minutes > 10 ? minutes : "0" + minutes} ${symbol}`;
-  };
+
   const groupByDate = (messages) => {
-    const groupedMessages = messages.reduce((acc, msg) => {
+    const sortedMessages = [...messages].sort(
+      (a, b) => new Date(a.created_at) - new Date(b.created_at),
+    );
+    const groupedMessages = sortedMessages.reduce((acc, msg) => {
       const datekey = new Date(msg.created_at).toDateString();
       // console.log(datekey);
       // console.log(acc);
@@ -63,17 +75,26 @@ export default function ChatMessageList({
       acc[datekey].push(msg);
       return acc;
     }, {});
+    console.log(groupedMessages);
     return groupedMessages;
+  };
+  const sortMessages = (messages) => {
+    const groupedMsg = groupByDate(messages);
+    const sorted = Object.fromEntries(
+      Object.entries(groupedMsg).sort(([monthA], [monthB]) => {
+        console.log(monthA);
+        return (
+          Number(new Date(monthA).getMonth()) -
+          Number(new Date(monthB).getMonth())
+        );
+      }),
+    );
+    console.log(sorted);
+    return sorted;
   };
 
   return (
-    <section
-      style={{
-        height: "100vh",
-        display: "grid",
-        gridTemplateRows: "10vh 70vh 20vh",
-      }}
-    >
+    <section className="message-list-section">
       <ConversationHeader
         closeRoom={closeRoom}
         user={user}
@@ -81,6 +102,27 @@ export default function ChatMessageList({
       />
       {/* <!-- Message Feed --> */}
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+        <div className="center">
+          {nextPage ? (
+            <Button
+              text="Load More"
+              onClick={() => {
+                loadmore(nextPage);
+                console.log(nextPage);
+              }}
+              className="rounded-full bg-primary-container text-black"
+              style={{ padding: "10px" }}
+              buttonDisabled={false}
+            />
+          ) : (
+            <Button
+              text="Load More"
+              className="rounded-full bg-primary-container text-black"
+              style={{ padding: "10px" }}
+              buttonDisabled={true}
+            />
+          )}
+        </div>
         {Object.entries(groupByDate(chatMessage)).map(([date, messages]) => (
           <>
             <DateDivider date={date} />
@@ -95,31 +137,13 @@ export default function ChatMessageList({
             ))}
           </>
         ))}
-        {/* {chatMessage.map((message, id) => (
-          <ChatMessage
-            key={id}
-            text={message.content}
-            time={parseTime(message.created_at)}
-            is_sender={message.sender == user_id}
-          />
-        ))} */}
-
-        {/* <!-- Typing indicator --> */}
-        {/* <div className="flex items-center gap-2 text-[#8c8b5f] text-xs font-medium ml-11">
-          <span className="italic">Sarah is typing</span>
-          <div className="flex gap-1">
-            <div className="size-1 bg-[#8c8b5f] rounded-full animate-bounce"></div>
-            <div className="size-1 bg-[#8c8b5f] rounded-full animate-bounce [animation-delay:0.2s]"></div>
-            <div className="size-1 bg-[#8c8b5f] rounded-full animate-bounce [animation-delay:0.4s]"></div>
-          </div>
-        </div> */}
+        <div ref={scrollDiv}></div>
       </div>
-      {/* <!-- Chat Input --> */}
       <form
         onSubmit={(e) => {
           sendMessage(e, currentChat);
         }}
-        className=" bg-white dark:bg-[#1a1a0d] border-t border-[#e5e5e0] dark:border-[#3d3c2a] p-4 flex items-center gap-4 shrink-0"
+        className="msg-form-send bg-white dark:bg-[#1a1a0d] border-t border-[#e5e5e0] dark:border-[#3d3c2a]  flex items-center gap-4 shrink-0"
       >
         <div className="flex gap-2">
           {/* <button className="size-11 rounded-full flex items-center justify-center text-[#8c8b5f] hover:bg-[#f5f5f0] dark:hover:bg-[#2e2d1a] transition-colors">
@@ -134,7 +158,7 @@ export default function ChatMessageList({
 
         <div className="flex-1 relative">
           <input
-            className="w-full h-12 bg-[#f5f5f0] dark:bg-[#2e2d1a] border-none rounded-full px-6 text-sm focus:ring-2 focus:ring-primary/50"
+            className="w-full h-12 bg-[#f5f5f0] dark:bg-[#2e2d1a] border-none rounded-full px-6 text-sm"
             placeholder="Type a message..."
             type="text"
             value={messageInput}
